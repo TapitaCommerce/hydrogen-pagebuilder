@@ -1,6 +1,6 @@
 import {useLocation, useHistory} from 'react-router-dom';
 import Layout from './Layout.server';
-import {PageBuilderComponent} from 'simi-pagebuilder-react';
+import {PageBuilderComponent} from './PageBuilder/src/index.server';
 const endPoint = 'https://tapita.io/pb/';
 const integrationToken = '14FJiubdB8n3Byig2IkpfM6OiS6RTO801622446444';
 import {Link} from '@shopify/hydrogen';
@@ -63,6 +63,7 @@ export default function NotFound({country = {isoCode: 'US'}}) {
       );
     }
   }
+  return 'noo';
 
   return (
     <Layout>
