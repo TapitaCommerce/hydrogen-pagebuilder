@@ -54,7 +54,6 @@ export default function NotFound(props) {
     });
 
     if (pageToFind && pageToFind.masked_id) {
-      pageMaskedId = pageToFind.masked_id;
       return (
         <Layout>
           <div id="ssr-smpb-ctn">
