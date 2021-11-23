@@ -54,7 +54,6 @@ export default function NotFound(props) {
     });
 
     if (pageToFind && pageToFind.masked_id) {
-      pageData = pageToFind;
       pageMaskedId = pageToFind.masked_id;
       return (
         <Layout>
@@ -63,8 +62,8 @@ export default function NotFound(props) {
               key={location.pathname}
               Link={Link}
               integrationToken={integrationToken}
-              pageData={pageData}
-              maskedId={pageData.masked_id}
+              pageData={pageToFind}
+              maskedId={pageToFind.masked_id}
             />
           </div>
           <NotFoundClient
