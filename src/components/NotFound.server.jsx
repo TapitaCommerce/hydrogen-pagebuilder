@@ -68,6 +68,7 @@ export default function NotFound(props) {
           <NotFoundClient
             integrationToken={integrationToken}
             endPoint={endPoint}
+            serverRenderedPage={pageToFind}
           />
         </Layout>
       );

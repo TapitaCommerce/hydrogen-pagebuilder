@@ -8,7 +8,7 @@ import {PageBuilderComponent} from 'simi-pagebuilder-react';
 import LoadingFallback from './LoadingFallback';
 
 function NotFoundHero(props) {
-  const {endPoint, integrationToken} = props;
+  const {endPoint, integrationToken, serverRenderedPage} = props;
   const location = useLocation();
   const history = useHistory();
 
@@ -16,7 +16,7 @@ function NotFoundHero(props) {
     endPoint,
     integrationToken,
   });
-  
+
   const {loading: pbLoading, findPage, pathToFind} = pbFinderProps;
   let {pageMaskedId, pageData} = pbFinderProps;
 
@@ -50,6 +50,16 @@ function NotFoundHero(props) {
     );
   }
   if (!pageMaskedId) {
+    if (serverRenderedPage && serverRenderedPage) {
+      return (
+        <PageBuilderComponent
+          {...pbcProps}
+          key={serverRenderedPage.masked_id}
+          maskedId={serverRenderedPage.masked_id}
+          pageData={serverRenderedPage}
+        />
+      );
+    }
     return (
       <div style={{minHeight: '100vh', textAlign: 'center', paddingTop: 100}}>
         Loading...
