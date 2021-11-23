@@ -1,6 +1,6 @@
 import {useLocation, useHistory} from 'react-router-dom';
 import Layout from './Layout.server';
-import {PageBuilderComponent} from './PageBuilder/src/index.server';
+import {PageBuilderComponent} from 'simi-pagebuilder-react';
 const endPoint = 'https://tapita.io/pb/';
 const integrationToken = '14FJiubdB8n3Byig2IkpfM6OiS6RTO801622446444';
 import {Link} from '@shopify/hydrogen';
@@ -18,13 +18,13 @@ function getPageProps() {
 }
 
 let pbData;
-let firstLoadPathname;
+let pbFirstRequestPath;
 
-export default function NotFound({country = {isoCode: 'US'}}) {
+export default function NotFound(props) {
   const location = useLocation();
   if (!pbData) {
-    console.log('query data');
     pbData = {};
+    pbFirstRequestPath = location ? location.pathname : '/';
     const promise = getPageProps().then((pbResult) => {
       pbData = pbResult;
     });
@@ -34,14 +34,14 @@ export default function NotFound({country = {isoCode: 'US'}}) {
   if (
     location &&
     location.pathname &&
-    (!firstLoadPathname || firstLoadPathname === location.pathname) &&
+    pbFirstRequestPath === location.pathname &&
     pbData &&
     pbData.data &&
     pbData.data.spb_page &&
     pbData.data.spb_page.items &&
     pbData.data.spb_page.items.length
   ) {
-    const pbPages = pbData.data.spb_page.items;
+    const pbPages = JSON.parse(JSON.stringify(pbData.data.spb_page.items));
     pbPages.sort((el1, el2) => parseInt(el2.priority) - parseInt(el1.priority));
     const pageToFind = pbPages.find((item) => {
       return item.url_path === location.pathname;
@@ -49,7 +49,7 @@ export default function NotFound({country = {isoCode: 'US'}}) {
     if (pageToFind && pageToFind.masked_id) {
       pageData = pageToFind;
       pageMaskedId = pageToFind.masked_id;
-      firstLoadPathname = location.pathname;
+      pbFirstRequestPath = false;
       return (
         <Layout>
           <PageBuilderComponent
@@ -63,7 +63,6 @@ export default function NotFound({country = {isoCode: 'US'}}) {
       );
     }
   }
-  return 'noo';
 
   return (
     <Layout>
