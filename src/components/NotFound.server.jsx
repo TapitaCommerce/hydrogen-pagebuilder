@@ -1,15 +1,20 @@
 import {useLocation, useHistory} from 'react-router-dom';
 import Layout from './Layout.server';
 import {PageBuilderComponent} from 'simi-pagebuilder-react';
-const endPoint = 'https://tapita.io/pb/';
-const integrationToken = '14FJiubdB8n3Byig2IkpfM6OiS6RTO801622446444';
+const endPoint = 'https://tapita.io/pb/graphql/';
+const integrationToken = '17nMVmUJAxdditfSvAqBqoC6VJKTKpD21626949895';
 import {Link} from '@shopify/hydrogen';
 
 import NotFoundClient from './NotFound.client';
 
 function getPageProps() {
+  let pbUrl = endPoint.replace('/graphql', '/publishedpb');
+  if (!pbUrl.endsWith('/')) pbUrl += '/';
+  if (pbUrl.indexOf('?') !== -1)
+    pbUrl += '&integrationToken=' + integrationToken;
+  else pbUrl += '?integrationToken=' + integrationToken;
   // Get our page props from our custom API:
-  return fetch(endPoint + 'publishedpb/?integrationToken=' + integrationToken, {
+  return fetch(pbUrl, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -18,15 +23,17 @@ function getPageProps() {
 }
 
 let pbData;
-let pbFirstRequestPath;
 
 export default function NotFound(props) {
   const location = useLocation();
   if (!pbData) {
     pbData = {};
-    pbFirstRequestPath = location ? location.pathname : '/';
     const promise = getPageProps().then((pbResult) => {
       pbData = pbResult;
+      //clean pb data every 60 secs
+      setTimeout(() => {
+        pbData = false;
+      }, 60000);
     });
     throw promise;
   }
@@ -34,7 +41,6 @@ export default function NotFound(props) {
   if (
     location &&
     location.pathname &&
-    pbFirstRequestPath === location.pathname &&
     pbData &&
     pbData.data &&
     pbData.data.spb_page &&
@@ -46,18 +52,24 @@ export default function NotFound(props) {
     const pageToFind = pbPages.find((item) => {
       return item.url_path === location.pathname;
     });
+
     if (pageToFind && pageToFind.masked_id) {
       pageData = pageToFind;
       pageMaskedId = pageToFind.masked_id;
-      pbFirstRequestPath = false;
       return (
         <Layout>
-          <PageBuilderComponent
-            key={location.pathname}
-            Link={Link}
+          <div id="ssr-smpb-ctn">
+            <PageBuilderComponent
+              key={location.pathname}
+              Link={Link}
+              integrationToken={integrationToken}
+              pageData={pageData}
+              maskedId={pageData.masked_id}
+            />
+          </div>
+          <NotFoundClient
             integrationToken={integrationToken}
-            pageData={pageData}
-            maskedId={pageData.masked_id}
+            endPoint={endPoint}
           />
         </Layout>
       );
@@ -66,7 +78,7 @@ export default function NotFound(props) {
 
   return (
     <Layout>
-      <NotFoundClient />
+      <NotFoundClient integrationToken={integrationToken} endPoint={endPoint} />
     </Layout>
   );
 }

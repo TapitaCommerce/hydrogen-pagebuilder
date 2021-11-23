@@ -3,13 +3,12 @@ import Button from './Button.client';
 import {useLocation, Link, useHistory} from 'react-router-dom';
 import {useEffect} from 'react';
 
-const endPoint = 'https://tapita.io/pb/graphql/';
-const integrationToken = '14FJiubdB8n3Byig2IkpfM6OiS6RTO801622446444';
 import {usePbFinder} from 'simi-pagebuilder-react';
 import {PageBuilderComponent} from 'simi-pagebuilder-react';
 import LoadingFallback from './LoadingFallback';
 
-function NotFoundHero() {
+function NotFoundHero(props) {
+  const {endPoint, integrationToken} = props;
   const location = useLocation();
   const history = useHistory();
 
@@ -17,6 +16,7 @@ function NotFoundHero() {
     endPoint,
     integrationToken,
   });
+  
   const {loading: pbLoading, findPage, pathToFind} = pbFinderProps;
   let {pageMaskedId, pageData} = pbFinderProps;
 
@@ -26,6 +26,11 @@ function NotFoundHero() {
         findPage(location.pathname);
     }
   }, [pbLoading, location, pageMaskedId, findPage]);
+
+  try {
+    //if client can run js like this, then we hide the ssr content
+    document.getElementById('ssr-smpb-ctn').innerHTML = '';
+  } catch (err) {}
 
   const pbcProps = {
     Link: Link,
@@ -72,6 +77,4 @@ function NotFoundHero() {
   );
 }
 
-export default function NotFoundClient(props) {
-  return <NotFoundHero />;
-}
+export default NotFoundHero;

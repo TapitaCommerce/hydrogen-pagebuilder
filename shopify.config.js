@@ -1,6 +1,6 @@
 export default {
   locale: 'en-us',
-  storeDomain: 'hydrogen-preview.myshopify.com',
-  storefrontToken: '3b580e70970c4528da70c98e097c2fa0',
+  storeDomain: 'simicartdemo.myshopify.com',
+  storefrontToken: 'e42b8ee293c1f005d15c8760ca014220',
   graphqlApiVersion: 'unstable',
 };
