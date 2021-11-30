@@ -7,6 +7,8 @@ import {usePbFinder} from 'simi-pagebuilder-react';
 import {PageBuilderComponent} from 'simi-pagebuilder-react';
 import LoadingFallback from './LoadingFallback';
 
+let lastRenderedPage;
+
 function NotFoundHero(props) {
   const {endPoint, integrationToken, serverRenderedPage} = props;
   const location = useLocation();
@@ -40,6 +42,7 @@ function NotFoundHero(props) {
   };
 
   if (pageMaskedId && pageMaskedId !== 'notfound') {
+    if (pageData) lastRenderedPage = pageData;
     return (
       <PageBuilderComponent
         {...pbcProps}
@@ -48,43 +51,19 @@ function NotFoundHero(props) {
         pageData={pageData && pageData.publish_items ? pageData : false}
       />
     );
-  }
-  if (!pageMaskedId) {
-    if (serverRenderedPage && serverRenderedPage) {
+  } else if (serverRenderedPage || lastRenderedPage) {
+    const pageToRender = serverRenderedPage || lastRenderedPage;
+    if (pageToRender)
       return (
         <PageBuilderComponent
           {...pbcProps}
-          key={serverRenderedPage.masked_id}
-          maskedId={serverRenderedPage.masked_id}
-          pageData={serverRenderedPage}
+          key={pageToRender.masked_id}
+          maskedId={pageToRender.masked_id}
+          pageData={pageToRender}
         />
       );
-    }
-    return (
-      <div style={{minHeight: '100vh', textAlign: 'center', paddingTop: 100}}>
-        Loading...
-      </div>
-    );
+    return '';
   }
-
-  return (
-    <div className="py-10 border-b border-gray-200">
-      <div className="max-w-3xl text-center mx-4 md:mx-auto">
-        <h1 className="text-gray-700 text-5xl font-bold mb-4">
-          We&#39;ve lost this page
-        </h1>
-        <p className="text-xl m-8 text-gray-500">
-          We couldn’t find the page you’re looking for. Try checking the URL or
-          heading back to the home page.
-        </p>
-        <Button
-          className="w-full md:mx-auto md:w-96"
-          url="/"
-          label="Take me to the home page"
-        />
-      </div>
-    </div>
-  );
 }
 
 export default NotFoundHero;
