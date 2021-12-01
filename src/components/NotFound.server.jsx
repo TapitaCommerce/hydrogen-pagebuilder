@@ -2,12 +2,15 @@ import {useLocation, useHistory} from 'react-router-dom';
 import Layout from './Layout.server';
 import {PageBuilderComponent} from 'simi-pagebuilder-react';
 const endPoint = 'https://tapita.io/pb/graphql/';
-const integrationToken = '17nMVmUJAxdditfSvAqBqoC6VJKTKpD21626949895';
+const integrationToken = '28YbkTlt7D1T6k6KnJfMHeCGKwgaTAt11632383932';
 import {Link} from '@shopify/hydrogen';
 import Button from './Button.client';
 
 import NotFoundClient from './NotFound.client';
-
+import ProductList from './TapitaPageBuilder/Product/ProductList.server';
+import ProductGrid from './TapitaPageBuilder/Product/ProductGrid.server';
+import Category from './TapitaPageBuilder/Category/Category.server';
+import CategoryList from './TapitaPageBuilder/Category/CategoryList.server';
 function getPageProps() {
   let pbUrl = endPoint.replace('/graphql', '/publishedpb');
   if (!pbUrl.endsWith('/')) pbUrl += '/';
@@ -65,13 +68,17 @@ export default function NotFound(props) {
               integrationToken={integrationToken}
               pageData={pageToFind}
               maskedId={pageToFind.masked_id}
+              ProductList={ProductList}
+              ProductGrid={ProductGrid}
+              Category={Category}
+              CategoryScroll={CategoryList}
             />
           </div>
-          <NotFoundClient
+          {/* <NotFoundClient
             integrationToken={integrationToken}
             endPoint={endPoint}
             serverRenderedPage={pageToFind}
-          />
+          /> */}
         </Layout>
       );
     }
