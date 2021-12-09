@@ -29,10 +29,14 @@ function NotFoundHero(props) {
     }
   }, [pbLoading, location, pageMaskedId, findPage]);
 
-  try {
-    //if client can run js like this, then we hide the ssr content
-    document.getElementById('ssr-smpb-ctn').innerHTML = '';
-  } catch (err) {}
+  useEffect(() => {
+    if (pageMaskedId && pageMaskedId !== 'notfound') {
+      try {
+        //if client can run js like this, then we hide the ssr content
+        document.getElementById('ssr-smpb-ctn').innerHTML = '';
+      } catch (err) {}
+    }
+  }, [pageMaskedId]);
 
   const pbcProps = {
     Link: Link,

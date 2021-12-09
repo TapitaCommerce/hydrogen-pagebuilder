@@ -2,7 +2,7 @@ import {useLocation, useHistory} from 'react-router-dom';
 import Layout from './Layout.server';
 import {PageBuilderComponent} from 'simi-pagebuilder-react';
 const endPoint = 'https://tapita.io/pb/graphql/';
-const integrationToken = '28YbkTlt7D1T6k6KnJfMHeCGKwgaTAt11632383932';
+const integrationToken = '17nMVmUJAxdditfSvAqBqoC6VJKTKpD21626949895';
 import {Link} from '@shopify/hydrogen';
 import Button from './Button.client';
 
@@ -74,11 +74,11 @@ export default function NotFound(props) {
               CategoryScroll={CategoryList}
             />
           </div>
-          {/* <NotFoundClient
+          <NotFoundClient
             integrationToken={integrationToken}
             endPoint={endPoint}
             serverRenderedPage={pageToFind}
-          /> */}
+          /> 
         </Layout>
       );
     }
