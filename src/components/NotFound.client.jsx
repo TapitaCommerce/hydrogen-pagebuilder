@@ -5,7 +5,8 @@ import {useEffect} from 'react';
 
 import {usePbFinder} from 'simi-pagebuilder-react';
 import {PageBuilderComponent} from 'simi-pagebuilder-react';
-import LoadingFallback from './LoadingFallback';
+import ProductList from './TapitaPageBuilder/Product/ProductList.client';
+import ProductGrid from './TapitaPageBuilder/Product/ProductGrid.client';
 
 let lastRenderedPage;
 
@@ -30,12 +31,12 @@ function NotFoundHero(props) {
   }, [pbLoading, location, pageMaskedId, findPage]);
 
   useEffect(() => {
-    if (pageMaskedId && pageMaskedId !== 'notfound') {
-      try {
-        //if client can run js like this, then we hide the ssr content
-        document.getElementById('ssr-smpb-ctn').innerHTML = '';
-      } catch (err) {}
-    }
+    //if (pageMaskedId && pageMaskedId !== 'notfound') {
+    try {
+      //if client can run js like this, then we hide the ssr content
+      document.getElementById('ssr-smpb-ctn').innerHTML = '';
+    } catch (err) {}
+    //}
   }, [pageMaskedId]);
 
   const pbcProps = {
@@ -53,6 +54,7 @@ function NotFoundHero(props) {
         key={pageMaskedId}
         maskedId={pageMaskedId}
         pageData={pageData && pageData.publish_items ? pageData : false}
+        ProductList={ProductList}
       />
     );
   } else if (serverRenderedPage || lastRenderedPage) {
@@ -64,6 +66,7 @@ function NotFoundHero(props) {
           key={pageToRender.masked_id}
           maskedId={pageToRender.masked_id}
           pageData={pageToRender}
+          ProductList={ProductList}
         />
       );
     return '';

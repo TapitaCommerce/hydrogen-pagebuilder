@@ -2,7 +2,7 @@ import {useLocation, useHistory} from 'react-router-dom';
 import Layout from './Layout.server';
 import {PageBuilderComponent} from 'simi-pagebuilder-react';
 const endPoint = 'https://tapita.io/pb/graphql/';
-const integrationToken = '17nMVmUJAxdditfSvAqBqoC6VJKTKpD21626949895';
+const integrationToken = '2xBXodtu16OPOKsWKcxA3riSeDkRpDL1622517111';
 import {Link} from '@shopify/hydrogen';
 import Button from './Button.client';
 
@@ -51,7 +51,7 @@ export default function NotFound(props) {
     pbData.data.spb_page.items &&
     pbData.data.spb_page.items.length
   ) {
-      console.log('server tried again');
+    console.log('server tried again');
     const pbPages = JSON.parse(JSON.stringify(pbData.data.spb_page.items));
     pbPages.sort((el1, el2) => parseInt(el2.priority) - parseInt(el1.priority));
     const pageToFind = pbPages.find((item) => {
@@ -60,7 +60,7 @@ export default function NotFound(props) {
 
     if (pageToFind && pageToFind.masked_id) {
       return (
-        <Layout>
+        <Layout fullWidthChildren={true}>
           <div id="ssr-smpb-ctn">
             <PageBuilderComponent
               key={location.pathname}
@@ -78,7 +78,7 @@ export default function NotFound(props) {
             integrationToken={integrationToken}
             endPoint={endPoint}
             serverRenderedPage={pageToFind}
-          /> 
+          />
         </Layout>
       );
     }
