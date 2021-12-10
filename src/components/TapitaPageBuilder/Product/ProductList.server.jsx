@@ -33,10 +33,10 @@ export default function ProductList(props) {
   const collection = data.collection;
   const products = flattenConnection(collection.products);
   return (
-    <div class="product-list">
-      <div id="overall-scroll" class="overall-scroll">
+    <div className="product-list">
+      <div className="smpbProductListCtn">
         {products.map((product) => (
-          <div class="carousel-item">
+          <div className="carousel-item">
             <ProductCard product={product} />
           </div>
         ))}

@@ -7,6 +7,7 @@ import {useEffect} from 'react';
 import {usePbFinder} from 'simi-pagebuilder-react';
 import {PageBuilderComponent} from 'simi-pagebuilder-react';
 import ProductList from './TapitaPageBuilder/Product/ProductList.client';
+import ProductGrid from './TapitaPageBuilder/Product/ProductGrid.client';
 
 import {
   ApolloClient,
@@ -74,6 +75,8 @@ function NotFoundHero(props) {
     history: history,
     endPoint,
     integrationToken,
+    ProductGrid,
+    ProductList,
   };
 
   const renderNotFoundContent = () => {
@@ -85,7 +88,6 @@ function NotFoundHero(props) {
           key={pageMaskedId}
           maskedId={pageMaskedId}
           pageData={pageData && pageData.publish_items ? pageData : false}
-          ProductList={ProductList}
         />
       );
     } else if (serverRenderedPage || lastRenderedPage) {
@@ -97,7 +99,6 @@ function NotFoundHero(props) {
             key={pageToRender.masked_id}
             maskedId={pageToRender.masked_id}
             pageData={pageToRender}
-            ProductList={ProductList}
           />
         );
       return '';

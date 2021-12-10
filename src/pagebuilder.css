@@ -1,3 +1,7 @@
+.spb-item::-webkit-scrollbar {
+  display: none;
+}
+
 .spb-item-root {
   font-family: 'Poppins', Helvetica, Arial, sans-serif;
   font-size: 14px;
@@ -495,7 +499,12 @@ react-responsive-carousel/lib/styles/carousel.min.css
   overflow: hidden;
   min-width: 100%;
 }
-.overall-scroll {
+.smpbProductListCtn::-webkit-scrollbar {
+  display: none;
+}
+
+.smpbProductListCtn {
+  -ms-overflow-style: none;
   scroll-behavior: smooth;
   display: flex;
   width: 100%;
@@ -505,9 +514,31 @@ react-responsive-carousel/lib/styles/carousel.min.css
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
-.overall-scroll::-webkit-scrollbar {
-  display: none;
+.scrollNavCtn {
+  display: flex;
+  width: 60px;
+  margin-left: auto;
+  margin-top: 10px;
+  justify-content: space-between;
 }
+.scrollNavCtn > div {
+  padding: 2px;
+  cursor: pointer;
+}
+.scrollNavCtn > div.navDisabled {
+  opacity: 0.3 !important;
+}
+
+.scrollNavCtn > div:hover {
+  opacity: 0.8;
+}
+
+@media (max-width: 1024px) {
+  .scrollNavCtn {
+    display: none;
+  }
+}
+
 .carousel-item {
   min-width: 15rem;
   max-width: 15rem;

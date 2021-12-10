@@ -32,10 +32,10 @@ export default function Category(props) {
     }
   });
   return (
-    <div class="category-list">
+    <div className="category-list">
       <Link to={`/collections/${category[0].node.handle}`}>
-        <Image class="category-image" src={image} width={300} height={300} />
-        <p class="category-name">{category[0].node.title}</p>
+        <Image className="category-image" src={image} width={300} height={300} />
+        <p className="category-name">{category[0].node.title}</p>
       </Link>
     </div>
   );

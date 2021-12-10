@@ -22,13 +22,13 @@ export default function CategoryList(props) {
   const edges = data.collections.edges;
   console.log(edges);
   return (
-    <div class="product-list">
-      <div id="overall-scroll" class="overall-scroll">
+    <div className="product-list">
+      <div className="smpbProductListCtn">
         {edges.map((edge) => (
-          <div class="carousel-item-category">
+          <div className="carousel-item-category">
             <Link to={`/collections/${edge.node.handle}`}>
-              <Image class="category-list-image" src={image} width={300} height={300} />
-              <p class="category-name">{edge.node.title}</p>
+              <Image className="category-list-image" src={image} width={300} height={300} />
+              <p className="category-name">{edge.node.title}</p>
             </Link>
           </div>
         ))}

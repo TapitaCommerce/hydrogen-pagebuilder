@@ -1,10 +1,12 @@
 import {
   flattenConnection,
   ProductProviderFragment,
-  useShopQuery,
-} from '@shopify/hydrogen';
-import gql from 'graphql-tag';
+  MediaFileFragment,
+} from '@shopify/hydrogen/client';
+import {useQuery} from '@apollo/client';
 import ProductCard from '../../ProductCard';
+import React, {useState, useEffect} from 'react';
+import {QUERY} from './ProductList.client';
 export default function ProductGrid(props) {
   const item = props.item;
 
@@ -22,14 +24,14 @@ export default function ProductGrid(props) {
     }
   }
 
-  const {data} = useShopQuery({
-    query: QUERY,
+  const {data} = useQuery(QUERY, {
     variables: {
       handle: handle,
       numProducts: pageSize,
     },
+    skip: !handle,
   });
-
+  if (!data) return '';
   const collection = data.collection;
   const products = flattenConnection(collection.products);
   return (
@@ -44,38 +46,3 @@ export default function ProductGrid(props) {
     </div>
   );
 }
-
-const QUERY = gql`
-  query CollectionDetails(
-    $handle: String!
-    $country: CountryCode
-    $numProducts: Int!
-    $includeReferenceMetafieldDetails: Boolean = false
-    $numProductMetafields: Int = 0
-    $numProductVariants: Int = 250
-    $numProductMedia: Int = 6
-    $numProductVariantMetafields: Int = 0
-    $numProductVariantSellingPlanAllocations: Int = 0
-    $numProductSellingPlanGroups: Int = 0
-    $numProductSellingPlans: Int = 0
-  ) @inContext(country: $country) {
-    collection(handle: $handle) {
-      id
-      title
-      descriptionHtml
-
-      products(first: $numProducts) {
-        edges {
-          node {
-            vendor
-            ...ProductProviderFragment
-          }
-        }
-        pageInfo {
-          hasNextPage
-        }
-      }
-    }
-  }
-  ${ProductProviderFragment}
-`;
