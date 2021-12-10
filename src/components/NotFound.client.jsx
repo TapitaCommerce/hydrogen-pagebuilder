@@ -22,7 +22,15 @@ import {setContext} from '@apollo/client/link/context';
 let lastRenderedPage;
 
 function NotFoundHero(props) {
-  const {endPoint, integrationToken, serverRenderedPage} = props;
+  const {endPoint, integrationToken, serverRenderedPage, pbData} = props;
+  if (
+    typeof window !== 'undefined' &&
+    pbData &&
+    pbData.data &&
+    pbData.data.spb_page
+  ) {
+    window.smPbPagesByToken = pbData;
+  }
   const location = useLocation();
   const history = useHistory();
 
@@ -80,7 +88,7 @@ function NotFoundHero(props) {
     ProductGrid,
     ProductList,
     Category,
-    CategoryScroll: CategoryList
+    CategoryScroll: CategoryList,
   };
 
   const renderNotFoundContent = () => {

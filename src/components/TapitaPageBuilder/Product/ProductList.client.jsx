@@ -12,12 +12,11 @@ import React, {useState, useEffect} from 'react';
 import {ChevronLeft, ChevronRight} from 'react-feather';
 
 let slidedTheSlider = false;
-let maxSteps = 1;
-
 export default function ProductList(props) {
   const item = props.item;
   const unqId = 'smpb-productlist-' + item.entity_id;
   const [currentStep, setCurrentStep] = useState(0);
+  const [maxSteps, setMaxSteps] = useState(0);
 
   let handle = null;
   let pageSize = 12;
@@ -67,7 +66,7 @@ export default function ProductList(props) {
   };
 
   useEffect(() => {
-    if (document.getElementById(unqId)) {
+    if (document.getElementById(unqId) && maxSteps === 0) {
       const ctnEl = document.getElementById(unqId);
       const ctnWidth = ctnEl.offsetWidth;
       let galleryItemWidth;
@@ -81,7 +80,11 @@ export default function ProductList(props) {
       if (!galleryItemWidth) {
         galleryItemWidth = ctnWidth / 3;
       }
-      maxSteps = productCount - parseInt(ctnWidth / galleryItemWidth);
+      const newMaxStep = productCount - parseInt(ctnWidth / galleryItemWidth);
+      console.log(newMaxStep);
+      if (newMaxStep !== maxSteps) {
+        setMaxSteps(newMaxStep);
+      }
     }
   });
 
@@ -113,24 +116,28 @@ export default function ProductList(props) {
           </div>
         ))}
       </div>
-      <div className="scrollNavCtn">
-        <div
-          className={currentStep === 0 ? 'navDisabled' : ''}
-          onClick={() => {
-            if (currentStep > 0) setCurrentStep(currentStep - 1);
-          }}
-        >
-          <ChevronLeft size={24} />
+      {maxSteps && maxSteps > 0 ? (
+        <div className="scrollNavCtn">
+          <div
+            className={currentStep === 0 ? 'navDisabled' : ''}
+            onClick={() => {
+              if (currentStep > 0) setCurrentStep(currentStep - 1);
+            }}
+          >
+            <ChevronLeft size={24} />
+          </div>
+          <div
+            className={maxSteps && currentStep >= maxSteps ? 'navDisabled' : ''}
+            onClick={() => {
+              if (currentStep < maxSteps) setCurrentStep(currentStep + 1);
+            }}
+          >
+            <ChevronRight size={24} />
+          </div>
         </div>
-        <div
-          className={(maxSteps && (currentStep >= maxSteps)) ? 'navDisabled' : ''}
-          onClick={() => {
-            if (currentStep < maxSteps) setCurrentStep(currentStep + 1);
-          }}
-        >
-          <ChevronRight size={24} />
-        </div>
-      </div>
+      ) : (
+        ''
+      )}
     </div>
   );
 }
