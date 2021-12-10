@@ -38,7 +38,7 @@ export default function ProductGrid(props) {
     <div className="product-grid">
       <div className="start-grid">
         {products.map((product) => (
-          <div className="carousel-item">
+          <div className="carousel-item" key={product.id}>
             <ProductCard product={product} />
           </div>
         ))}

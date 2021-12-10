@@ -78,6 +78,7 @@ export default function NotFound(props) {
             integrationToken={integrationToken}
             endPoint={endPoint}
             serverRenderedPage={pageToFind}
+            pbData={pbData}
           />
         </Layout>
       );

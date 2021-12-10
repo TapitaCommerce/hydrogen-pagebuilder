@@ -8,6 +8,8 @@ import {usePbFinder} from 'simi-pagebuilder-react';
 import {PageBuilderComponent} from 'simi-pagebuilder-react';
 import ProductList from './TapitaPageBuilder/Product/ProductList.client';
 import ProductGrid from './TapitaPageBuilder/Product/ProductGrid.client';
+import Category from './TapitaPageBuilder/Category/Category.client';
+import CategoryList from './TapitaPageBuilder/Category/CategoryList.client';
 
 import {
   ApolloClient,
@@ -77,6 +79,8 @@ function NotFoundHero(props) {
     integrationToken,
     ProductGrid,
     ProductList,
+    Category,
+    CategoryScroll: CategoryList
   };
 
   const renderNotFoundContent = () => {

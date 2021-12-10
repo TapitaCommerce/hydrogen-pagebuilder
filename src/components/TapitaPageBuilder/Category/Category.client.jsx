@@ -1,7 +1,7 @@
-import {flattenConnection, useShopQuery} from '@shopify/hydrogen';
 import gql from 'graphql-tag';
-import ProductCard from '../../ProductCard';
-import {Image, Link} from '@shopify/hydrogen';
+import {Image, Link} from '@shopify/hydrogen/client';
+import {useQuery} from '@apollo/client';
+
 export default function Category(props) {
   const item = props.item;
 
@@ -19,11 +19,10 @@ export default function Category(props) {
     }
   }
 
-  const {data} = useShopQuery({
-    query: QUERY,
+  const {data} = useQuery(QUERY, {
     variables: {},
   });
-
+  if (!data) return '';
   const edges = data.collections.edges;
   let category = [];
   edges.map((edge) => {
@@ -32,7 +31,7 @@ export default function Category(props) {
     }
   });
   return (
-    <div className="category-list">
+    <div style={{textAlign: 'center'}}>
       {image ? (
         <Link to={`/collections/${category[0].node.handle}`}>
           <Image

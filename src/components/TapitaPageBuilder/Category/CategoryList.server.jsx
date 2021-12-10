@@ -1,11 +1,10 @@
-import {flattenConnection, useShopQuery} from '@shopify/hydrogen';
+import {useShopQuery} from '@shopify/hydrogen';
 import gql from 'graphql-tag';
-import ProductCard from '../../ProductCard';
 import {Image, Link} from '@shopify/hydrogen';
 export default function CategoryList(props) {
   const item = props.item;
 
-  let handle = null;
+
   let image = null;
   if (item && item.dataParsed) {
     const dataParsed = item.dataParsed;
@@ -20,18 +19,26 @@ export default function CategoryList(props) {
   });
 
   const edges = data.collections.edges;
-  console.log(edges);
   return (
     <div className="product-list">
       <div className="smpbProductListCtn">
-        {edges.map((edge) => (
-          <div className="carousel-item-category">
-            <Link to={`/collections/${edge.node.handle}`}>
-              <Image className="category-list-image" src={image} width={300} height={300} />
-              <p className="category-name">{edge.node.title}</p>
-            </Link>
-          </div>
-        ))}
+        {edges.map((edge) =>
+          image ? (
+            <div className="carousel-item-category">
+              <Link to={`/collections/${edge.node.handle}`}>
+                <Image
+                  className="category-list-image"
+                  src={image}
+                  width={300}
+                  height={300}
+                />
+                <p className="category-name">{edge.node.title}</p>
+              </Link>
+            </div>
+          ) : (
+            ''
+          ),
+        )}
       </div>
     </div>
   );
