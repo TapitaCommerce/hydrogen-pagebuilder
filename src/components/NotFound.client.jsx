@@ -1,4 +1,5 @@
 import Button from './Button.client';
+import {useShop} from '@shopify/hydrogen/client';
 
 import {useLocation, Link, useHistory} from 'react-router-dom';
 import {useEffect} from 'react';
@@ -6,7 +7,14 @@ import {useEffect} from 'react';
 import {usePbFinder} from 'simi-pagebuilder-react';
 import {PageBuilderComponent} from 'simi-pagebuilder-react';
 import ProductList from './TapitaPageBuilder/Product/ProductList.client';
-import ProductGrid from './TapitaPageBuilder/Product/ProductGrid.client';
+
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  createHttpLink,
+} from '@apollo/client';
+import {setContext} from '@apollo/client/link/context';
 
 let lastRenderedPage;
 
@@ -14,6 +22,28 @@ function NotFoundHero(props) {
   const {endPoint, integrationToken, serverRenderedPage} = props;
   const location = useLocation();
   const history = useHistory();
+
+  const {storeDomain, storefrontToken, graphqlApiVersion} = useShop();
+  const authLink = setContext((_, {headers}) => {
+    return {
+      headers: {
+        ...headers,
+        Cookie: '',
+        'X-Shopify-Storefront-Access-Token': storefrontToken,
+      },
+    };
+  });
+
+  const httpLink = createHttpLink({
+    uri:
+      'https://' + storeDomain + '/api/' + graphqlApiVersion + '/graphql.json',
+    useGETForQueries: false,
+  });
+
+  const client = new ApolloClient({
+    cache: new InMemoryCache(),
+    link: authLink.concat(httpLink),
+  });
 
   const pbFinderProps = usePbFinder({
     endPoint,
@@ -46,31 +76,37 @@ function NotFoundHero(props) {
     integrationToken,
   };
 
-  if (pageMaskedId && pageMaskedId !== 'notfound') {
-    if (pageData) lastRenderedPage = pageData;
-    return (
-      <PageBuilderComponent
-        {...pbcProps}
-        key={pageMaskedId}
-        maskedId={pageMaskedId}
-        pageData={pageData && pageData.publish_items ? pageData : false}
-        ProductList={ProductList}
-      />
-    );
-  } else if (serverRenderedPage || lastRenderedPage) {
-    const pageToRender = serverRenderedPage || lastRenderedPage;
-    if (pageToRender)
+  const renderNotFoundContent = () => {
+    if (pageMaskedId && pageMaskedId !== 'notfound') {
+      if (pageData) lastRenderedPage = pageData;
       return (
         <PageBuilderComponent
           {...pbcProps}
-          key={pageToRender.masked_id}
-          maskedId={pageToRender.masked_id}
-          pageData={pageToRender}
+          key={pageMaskedId}
+          maskedId={pageMaskedId}
+          pageData={pageData && pageData.publish_items ? pageData : false}
           ProductList={ProductList}
         />
       );
-    return '';
-  }
+    } else if (serverRenderedPage || lastRenderedPage) {
+      const pageToRender = serverRenderedPage || lastRenderedPage;
+      if (pageToRender)
+        return (
+          <PageBuilderComponent
+            {...pbcProps}
+            key={pageToRender.masked_id}
+            maskedId={pageToRender.masked_id}
+            pageData={pageToRender}
+            ProductList={ProductList}
+          />
+        );
+      return '';
+    }
+  };
+
+  return (
+    <ApolloProvider client={client}>{renderNotFoundContent()}</ApolloProvider>
+  );
 }
 
 export default NotFoundHero;

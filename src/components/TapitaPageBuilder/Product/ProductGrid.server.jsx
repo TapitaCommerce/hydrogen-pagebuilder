@@ -1,11 +1,10 @@
 import {
   flattenConnection,
-  MediaFileFragment,
   ProductProviderFragment,
   useShopQuery,
 } from '@shopify/hydrogen';
 import gql from 'graphql-tag';
-import ProductCard from '../../ProductCard.server';
+import ProductCard from '../../ProductCard';
 export default function ProductGrid(props) {
   const item = props.item;
 
@@ -49,7 +48,9 @@ export default function ProductGrid(props) {
 const QUERY = gql`
   query CollectionDetails(
     $handle: String!
+    $country: CountryCode
     $numProducts: Int!
+    $includeReferenceMetafieldDetails: Boolean = false
     $numProductMetafields: Int = 0
     $numProductVariants: Int = 250
     $numProductMedia: Int = 6
@@ -57,7 +58,7 @@ const QUERY = gql`
     $numProductVariantSellingPlanAllocations: Int = 0
     $numProductSellingPlanGroups: Int = 0
     $numProductSellingPlans: Int = 0
-  ) {
+  ) @inContext(country: $country) {
     collection(handle: $handle) {
       id
       title
@@ -76,7 +77,5 @@ const QUERY = gql`
       }
     }
   }
-
-  ${MediaFileFragment}
   ${ProductProviderFragment}
 `;
