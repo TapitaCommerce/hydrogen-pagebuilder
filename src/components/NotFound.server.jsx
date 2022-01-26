@@ -2,7 +2,7 @@ import {useLocation, useHistory} from 'react-router-dom';
 import Layout from './Layout.server';
 import {PageBuilderComponent} from 'simi-pagebuilder-react';
 const endPoint = 'https://tapita.io/pb/graphql/';
-const integrationToken = '2xBXodtu16OPOKsWKcxA3riSeDkRpDL1622517111';
+const integrationToken = '28YbkTlt7D1T6k6KnJfMHeCGKwgaTAt11632383932';
 import {Link} from '@shopify/hydrogen';
 import Button from './Button.client';
 
