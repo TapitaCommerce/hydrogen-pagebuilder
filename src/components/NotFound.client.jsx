@@ -109,7 +109,6 @@ function NotFoundClient(props) {
       );
     } else if (serverRenderedPage || lastRenderedPage) {
       const pageToRender = serverRenderedPage || lastRenderedPage;
-      console.log(serverRenderedPage);
       if (pageToRender)
         return (
           <PageBuilderComponent

@@ -72,7 +72,6 @@ export default function NotFound(props) {
     pbData.data.spb_page.items &&
     pbData.data.spb_page.items.length
   ) {
-    console.log('server tried again');
     const pbPages = JSON.parse(JSON.stringify(pbData.data.spb_page.items));
     pbPages.sort((el1, el2) => parseInt(el2.priority) - parseInt(el1.priority));
     const pageToFind = pbPages.find((item) => {
@@ -106,7 +105,6 @@ export default function NotFound(props) {
       );
     }
   }
-  console.log(pathname, 'pathname');
   if (pathname === '/hook') {
     pbData = false;
     return JSON.stringify({code: 200, message: 'Completed'});
