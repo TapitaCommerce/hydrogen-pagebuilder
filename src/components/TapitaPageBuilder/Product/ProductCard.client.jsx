@@ -1,7 +1,8 @@
-import {Image, Link} from '@shopify/hydrogen';
+import {Image} from '@shopify/hydrogen';
+import {Link} from '@shopify/hydrogen/client';
 
-import MoneyCompareAtPrice from './MoneyCompareAtPrice.client';
-import MoneyPrice from './MoneyPrice.client';
+import MoneyCompareAtPrice from '../../MoneyCompareAtPrice.client';
+import MoneyPrice from '../../MoneyPrice.client';
 
 /**
  * A shared component that displays a single product to allow buyers to quickly identify a particular item of interest

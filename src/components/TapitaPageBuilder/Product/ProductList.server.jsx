@@ -4,7 +4,7 @@ import {
   useShopQuery,
 } from '@shopify/hydrogen';
 import gql from 'graphql-tag';
-import ProductCard from '../../ProductCard';
+import ProductCard from './ProductCard.client';
 export default function ProductList(props) {
   const item = props.item;
 

@@ -1,11 +1,7 @@
-import {
-  flattenConnection,
-  ProductProviderFragment,
-  MediaFileFragment,
-} from '@shopify/hydrogen/client';
+import {flattenConnection} from '@shopify/hydrogen/client';
 import {useQuery} from '@apollo/client';
-import ProductCard from '../../ProductCard';
-import React, {useState, useEffect} from 'react';
+import ProductCard from './ProductCard.client';
+import React from 'react';
 import {QUERY} from './ProductList.client';
 export default function ProductGrid(props) {
   const item = props.item;

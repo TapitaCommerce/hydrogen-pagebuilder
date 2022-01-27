@@ -1,7 +1,6 @@
-import Button from './Button.client';
 import {useShop} from '@shopify/hydrogen/client';
 
-import {useLocation, Link, useHistory} from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
 import {useEffect} from 'react';
 
 import {usePbFinder} from 'simi-pagebuilder-react';
@@ -18,10 +17,11 @@ import {
   createHttpLink,
 } from '@apollo/client';
 import {setContext} from '@apollo/client/link/context';
+import {Link} from '@shopify/hydrogen/client';
 
 let lastRenderedPage;
 
-function NotFoundHero(props) {
+function NotFoundClient(props) {
   const {endPoint, integrationToken, serverRenderedPage, pbData} = props;
   if (
     typeof window !== 'undefined' &&
@@ -31,10 +31,11 @@ function NotFoundHero(props) {
   ) {
     window.smPbPagesByToken = pbData;
   }
-  const location = useLocation();
   const history = useHistory();
+  const location = history && history.location ? history.location : false;
+  const shopData = useShop();
+  const {storeDomain, storefrontToken, storefrontApiVersion} = shopData;
 
-  const {storeDomain, storefrontToken, graphqlApiVersion} = useShop();
   const authLink = setContext((_, {headers}) => {
     return {
       headers: {
@@ -47,7 +48,11 @@ function NotFoundHero(props) {
 
   const httpLink = createHttpLink({
     uri:
-      'https://' + storeDomain + '/api/' + graphqlApiVersion + '/graphql.json',
+      'https://' +
+      storeDomain +
+      '/api/' +
+      storefrontApiVersion +
+      '/graphql.json',
     useGETForQueries: false,
   });
 
@@ -75,7 +80,7 @@ function NotFoundHero(props) {
     //if (pageMaskedId && pageMaskedId !== 'notfound') {
     try {
       //if client can run js like this, then we hide the ssr content
-      document.getElementById('ssr-smpb-ctn').innerHTML = '';
+      //document.getElementById('ssr-smpb-ctn').innerHTML = '';
     } catch (err) {}
     //}
   }, []);
@@ -104,6 +109,7 @@ function NotFoundHero(props) {
       );
     } else if (serverRenderedPage || lastRenderedPage) {
       const pageToRender = serverRenderedPage || lastRenderedPage;
+      console.log(serverRenderedPage);
       if (pageToRender)
         return (
           <PageBuilderComponent
@@ -122,4 +128,4 @@ function NotFoundHero(props) {
   );
 }
 
-export default NotFoundHero;
+export default NotFoundClient;

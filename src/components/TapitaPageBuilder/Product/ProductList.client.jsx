@@ -4,7 +4,7 @@ import {
   MediaFileFragment,
 } from '@shopify/hydrogen/client';
 import {useQuery} from '@apollo/client';
-import ProductCard from '../../ProductCard';
+import ProductCard from './ProductCard.client';
 import gql from 'graphql-tag';
 import React, {useState, useEffect} from 'react';
 //https://www.apollographql.com/docs/react/get-started/
@@ -112,7 +112,7 @@ export default function ProductList(props) {
       >
         {products.map((product) => (
           <div className="carousel-item">
-            <ProductCard product={product} />
+            <ProductCard product={product} key={product.id} />
           </div>
         ))}
       </div>

@@ -1,6 +1,5 @@
 import {flattenConnection, useShopQuery} from '@shopify/hydrogen';
 import gql from 'graphql-tag';
-import ProductCard from '../../ProductCard';
 import {Image, Link} from '@shopify/hydrogen';
 export default function Category(props) {
   const item = props.item;
