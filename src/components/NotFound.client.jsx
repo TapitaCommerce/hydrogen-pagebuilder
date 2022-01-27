@@ -78,7 +78,7 @@ function NotFoundHero(props) {
       document.getElementById('ssr-smpb-ctn').innerHTML = '';
     } catch (err) {}
     //}
-  }, [pageMaskedId]);
+  }, []);
 
   const pbcProps = {
     Link: Link,
