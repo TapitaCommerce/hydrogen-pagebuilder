@@ -14,7 +14,7 @@ import {Suspense} from 'react';
 /**
  * A server component that defines a structure and organization of a page that can be used in different parts of the Hydrogen app
  */
-export default function Layout({children, hero}) {
+export default function Layout({children, hero, fullWidthChildren}) {
   const {data} = useShopQuery({
     query: QUERY,
     variables: {
@@ -47,7 +47,11 @@ export default function Layout({children, hero}) {
         </Suspense>
         <main role="main" id="mainContent" className="relative bg-gray-50">
           {hero}
-          <div className="mx-auto max-w-7xl p-4 md:py-5 md:px-8">
+          <div
+            className={`mx-auto ${
+              fullWidthChildren ? '' : 'max-w-7xl p-4 md:py-5 md:px-8'
+            }`}
+          >
             {children}
           </div>
         </main>
