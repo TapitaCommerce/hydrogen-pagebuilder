@@ -4,5 +4,5 @@ const getPrefix = (width) =>
 // for future on resize responsiveness
 export const useDeviceWidthPrefix = (props) => {
   //const {width} = useWindowSize();
-  return getPrefix(1280);
+  return getPrefix(768);
 };
