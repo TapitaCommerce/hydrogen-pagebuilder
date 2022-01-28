@@ -81,7 +81,6 @@ export default function ProductList(props) {
         galleryItemWidth = ctnWidth / 3;
       }
       const newMaxStep = productCount - parseInt(ctnWidth / galleryItemWidth);
-      console.log(newMaxStep);
       if (newMaxStep !== maxSteps) {
         setMaxSteps(newMaxStep);
       }

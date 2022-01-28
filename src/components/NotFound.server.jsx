@@ -9,7 +9,7 @@ import Layout from './Layout.server';
 import ProductCard from './ProductCard';
 
 import {Link} from '@shopify/hydrogen';
-import {PageBuilderComponent} from 'simi-pagebuilder-react';
+import {PageBuilderComponent} from './TapitaPageBuilder/src/index';
 const endPoint = 'https://tapita.io/pb/graphql/';
 const integrationToken = '2xBXodtu16OPOKsWKcxA3riSeDkRpDL1622517111';
 import NotFoundClient from './NotFound.client';
@@ -41,6 +41,7 @@ export default function NotFound(props) {
     serverState && serverState.pathname ? serverState.pathname : '';
   //   if (pathname && pathname[0] && pathname[0] === '/')
   //     pathname = pathname.substring(1);
+  /*
   const {data} = useShopQuery({
     query: QUERY,
     variables: {
@@ -55,6 +56,7 @@ export default function NotFound(props) {
     },
   });
   const products = data ? flattenConnection(data.products) : [];
+  */
   const location = serverState;
   if (!pbData) {
     pbData = {};
@@ -82,7 +84,6 @@ export default function NotFound(props) {
       return (
         <Layout fullWidthChildren={true}>
           <div id="ssr-smpb-ctn">
-            {/*
             <PageBuilderComponent
               key={pathname}
               Link={Link}
@@ -93,7 +94,7 @@ export default function NotFound(props) {
               ProductGrid={ProductGrid}
               Category={Category}
               CategoryScroll={CategoryList}
-              /> */}
+            />
           </div>
           <NotFoundClient
             integrationToken={integrationToken}
@@ -109,7 +110,7 @@ export default function NotFound(props) {
     pbData = false;
     return JSON.stringify({code: 200, message: 'Completed'});
   }
-
+  return '';
   return (
     <Layout>
       <div className="my-8">

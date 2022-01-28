@@ -12,6 +12,17 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/src/index.css" />
+    <script type="text/javascript">
+        window.smIsLightHouse = false;
+        if (navigator && navigator.userAgent) {
+            var botPattern = "(Lighthouse)";
+            var re = new RegExp(botPattern, 'i');
+            var userAgent = navigator.userAgent;
+            if (re.test(userAgent)) {
+                window.smIsLightHouse = true;
+            }
+        }
+    </script>
     <link rel="stylesheet" href="/src/pagebuilder.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
