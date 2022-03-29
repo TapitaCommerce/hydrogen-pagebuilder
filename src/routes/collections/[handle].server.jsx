@@ -1,10 +1,4 @@
-import {
-  MediaFileFragment,
-  ProductProviderFragment,
-  useShopQuery,
-  flattenConnection,
-  RawHtml,
-} from '@shopify/hydrogen';
+import {useShopQuery, flattenConnection, Seo} from '@shopify/hydrogen';
 import gql from 'graphql-tag';
 
 import LoadMoreProducts from '../../components/LoadMoreProducts.client';
@@ -25,6 +19,7 @@ export default function Collection({
       country: country.isoCode,
       numProducts: collectionProductCount,
     },
+    preload: true,
   });
 
   if (data?.collection == null) {
@@ -37,14 +32,18 @@ export default function Collection({
 
   return (
     <Layout>
+      {/* the seo object will be expose in API version 2022-04 or later */}
+      <Seo type="collection" data={collection} />
       <h1 className="font-bold text-4xl md:text-5xl text-gray-900 mb-6 mt-6">
         {collection.title}
       </h1>
-      <RawHtml string={collection.descriptionHtml} className="text-lg" />
+      <div
+        dangerouslySetInnerHTML={{__html: collection.descriptionHtml}}
+        className="text-lg"
+      />
       <p className="text-sm text-gray-500 mt-5 mb-5">
         {products.length} {products.length > 1 ? 'products' : 'product'}
       </p>
-
       <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
         {products.map((product) => (
           <li key={product.id}>
@@ -52,7 +51,6 @@ export default function Collection({
           </li>
         ))}
       </ul>
-
       {hasNextPage && (
         <LoadMoreProducts startingCount={collectionProductCount} />
       )}
@@ -65,25 +63,63 @@ const QUERY = gql`
     $handle: String!
     $country: CountryCode
     $numProducts: Int!
-    $includeReferenceMetafieldDetails: Boolean = false
-    $numProductMetafields: Int = 0
-    $numProductVariants: Int = 250
-    $numProductMedia: Int = 6
-    $numProductVariantMetafields: Int = 0
-    $numProductVariantSellingPlanAllocations: Int = 0
-    $numProductSellingPlanGroups: Int = 0
-    $numProductSellingPlans: Int = 0
   ) @inContext(country: $country) {
     collection(handle: $handle) {
-      id
       title
       descriptionHtml
-
+      description
+      seo {
+        description
+        title
+      }
+      image {
+        id
+        url
+        width
+        height
+        altText
+      }
       products(first: $numProducts) {
         edges {
           node {
+            title
             vendor
-            ...ProductProviderFragment
+            handle
+            descriptionHtml
+            compareAtPriceRange {
+              maxVariantPrice {
+                currencyCode
+                amount
+              }
+              minVariantPrice {
+                currencyCode
+                amount
+              }
+            }
+            variants(first: 1) {
+              edges {
+                node {
+                  id
+                  title
+                  availableForSale
+                  image {
+                    id
+                    url
+                    altText
+                    width
+                    height
+                  }
+                  priceV2 {
+                    currencyCode
+                    amount
+                  }
+                  compareAtPriceV2 {
+                    currencyCode
+                    amount
+                  }
+                }
+              }
+            }
           }
         }
         pageInfo {
@@ -92,7 +128,4 @@ const QUERY = gql`
       }
     }
   }
-
-  ${MediaFileFragment}
-  ${ProductProviderFragment}
 `;

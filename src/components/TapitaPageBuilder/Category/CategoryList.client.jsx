@@ -111,34 +111,75 @@ export default function CategoryList(props) {
   );
 }
 
-export const CollectionFragment = gql`
-  fragment CollectionFragment on Collection {
-    id
-    image {
-      altText
-      width
-      height
-      id
-      originalSrc
-      transformedSrc
-    }
-    title
-    updatedAt
-    descriptionHtml
-    handle
-  }
-`;
 
-const QUERY = gql`
-  query getCollectionDetails {
-    collections(first: 250) {
-      edges {
-        cursor
-        node {
-          ...CollectionFragment
+export const QUERY = gql`
+  query CollectionDetails(
+    $handle: String!
+    $country: CountryCode
+    $numProducts: Int!
+  ) @inContext(country: $country) {
+    collection(handle: $handle) {
+      title
+      descriptionHtml
+      description
+      seo {
+        description
+        title
+      }
+      image {
+        id
+        url
+        width
+        height
+        altText
+      }
+      products(first: $numProducts) {
+        edges {
+          node {
+            title
+            vendor
+            handle
+            descriptionHtml
+            compareAtPriceRange {
+              maxVariantPrice {
+                currencyCode
+                amount
+              }
+              minVariantPrice {
+                currencyCode
+                amount
+              }
+            }
+            variants(first: 1) {
+              edges {
+                node {
+                  id
+                  title
+                  availableForSale
+                  image {
+                    id
+                    url
+                    altText
+                    width
+                    height
+                  }
+                  priceV2 {
+                    currencyCode
+                    amount
+                  }
+                  compareAtPriceV2 {
+                    currencyCode
+                    amount
+                  }
+                }
+              }
+            }
+          }
+        }
+        pageInfo {
+          hasNextPage
         }
       }
     }
   }
-  ${CollectionFragment}
 `;

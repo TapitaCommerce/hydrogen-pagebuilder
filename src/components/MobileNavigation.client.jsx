@@ -1,15 +1,27 @@
-import {Fragment} from 'react';
+import {Fragment, useEffect} from 'react';
 import {Link} from '@shopify/hydrogen/client';
 import {FocusTrap} from '@headlessui/react';
 
-import MobileCurrencySelector from './MobileCurrencySelector.client';
+import MobileCountrySelector from './MobileCountrySelector.client';
 import OpenIcon from './OpenIcon';
+
+let scrollPosition = 0;
 
 /**
  * A client component that defines the navigation for a mobile storefront
  */
 export default function MobileNavigation({collections, isOpen, setIsOpen}) {
   const OpenFocusTrap = isOpen ? FocusTrap : Fragment;
+
+  useEffect(() => {
+    if (isOpen) {
+      scrollPosition = window.scrollY;
+      document.body.style.position = 'fixed';
+    } else if (document.body.style.position) {
+      document.body.style.position = '';
+      window.scrollTo(0, scrollPosition);
+    }
+  }, [isOpen]);
 
   return (
     <div className="lg:hidden">
@@ -19,10 +31,11 @@ export default function MobileNavigation({collections, isOpen, setIsOpen}) {
           className="flex justify-center items-center w-7 h-full"
           onClick={() => setIsOpen((previousIsOpen) => !previousIsOpen)}
         >
+          <span className="sr-only">{isOpen ? 'Close' : 'Open'} Menu</span>
           {isOpen ? <CloseIcon /> : <OpenIcon />}
         </button>
         {isOpen ? (
-          <div className="absolute -left-0 top-20 w-full h-screen z-10 bg-gray-50 px-4 md:px-12 py-7">
+          <div className="fixed -left-0 top-20 w-full h-screen z-10 bg-gray-50 px-4 md:px-12 py-7">
             <ul>
               {collections.map((collection) => (
                 <li className="border-b border-gray-200" key={collection.id}>
@@ -37,7 +50,7 @@ export default function MobileNavigation({collections, isOpen, setIsOpen}) {
                 </li>
               ))}
             </ul>
-            <MobileCurrencySelector />
+            <MobileCountrySelector />
           </div>
         ) : null}
       </OpenFocusTrap>

@@ -1,9 +1,9 @@
 import {
   useShopQuery,
   flattenConnection,
-  ProductProviderFragment,
-  Image,
   Link,
+  Seo,
+  CacheDays,
 } from '@shopify/hydrogen';
 import gql from 'graphql-tag';
 
@@ -16,6 +16,9 @@ import {Suspense} from 'react';
 export default function Index({country = {isoCode: 'US'}}) {
   return (
     <Layout hero={<GradientBackground />}>
+      <Suspense fallback={null}>
+        <SeoForHomepage />
+      </Suspense>
       <div className="relative mb-12">
         <Welcome />
         <Suspense fallback={<BoxFallback />}>
@@ -29,6 +32,28 @@ export default function Index({country = {isoCode: 'US'}}) {
   );
 }
 
+function SeoForHomepage() {
+  const {
+    data: {
+      shop: {title, description},
+    },
+  } = useShopQuery({
+    query: SEO_QUERY,
+    cache: CacheDays(),
+    preload: true,
+  });
+
+  return (
+    <Seo
+      type="homepage"
+      data={{
+        title,
+        description,
+      }}
+    />
+  );
+}
+
 function BoxFallback() {
   return <div className="bg-white p-12 shadow-xl rounded-xl mb-10 h-40"></div>;
 }
@@ -39,6 +64,7 @@ function FeaturedProductsBox({country}) {
     variables: {
       country: country.isoCode,
     },
+    preload: true,
   });
 
   const collections = data ? flattenConnection(data.collections) : [];
@@ -91,6 +117,7 @@ function FeaturedCollectionBox({country}) {
     variables: {
       country: country.isoCode,
     },
+    preload: true,
   });
 
   const collections = data ? flattenConnection(data.collections) : [];
@@ -155,35 +182,59 @@ function GradientBackground() {
   );
 }
 
+const SEO_QUERY = gql`
+  query homeShopInfo {
+    shop {
+      description
+    }
+  }
+`;
+
 const QUERY = gql`
-  query indexContent(
-    $country: CountryCode
-    $numCollections: Int = 2
-    $numProducts: Int = 3
-    $includeReferenceMetafieldDetails: Boolean = false
-    $numProductMetafields: Int = 0
-    $numProductVariants: Int = 250
-    $numProductMedia: Int = 1
-    $numProductVariantMetafields: Int = 10
-    $numProductVariantSellingPlanAllocations: Int = 0
-    $numProductSellingPlanGroups: Int = 0
-    $numProductSellingPlans: Int = 0
-  ) @inContext(country: $country) {
-    collections(first: $numCollections) {
+  query indexContent($country: CountryCode) @inContext(country: $country) {
+    collections(first: 2) {
       edges {
         node {
-          descriptionHtml
-          description
           handle
           id
           title
           image {
-            ...ImageFragment
+            id
+            url
+            altText
+            width
+            height
           }
-          products(first: $numProducts) {
+          products(first: 3) {
             edges {
               node {
-                ...ProductProviderFragment
+                handle
+                id
+                title
+                variants(first: 1) {
+                  edges {
+                    node {
+                      id
+                      title
+                      availableForSale
+                      image {
+                        id
+                        url
+                        altText
+                        width
+                        height
+                      }
+                      priceV2 {
+                        currencyCode
+                        amount
+                      }
+                      compareAtPriceV2 {
+                        currencyCode
+                        amount
+                      }
+                    }
+                  }
+                }
               }
             }
           }
@@ -191,7 +242,4 @@ const QUERY = gql`
       }
     }
   }
-
-  ${ProductProviderFragment}
-  ${Image.Fragment}
 `;

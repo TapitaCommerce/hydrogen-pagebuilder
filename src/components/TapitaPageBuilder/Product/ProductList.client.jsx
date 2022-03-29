@@ -1,8 +1,4 @@
-import {
-  flattenConnection,
-  ProductProviderFragment,
-  MediaFileFragment,
-} from '@shopify/hydrogen/client';
+import {flattenConnection} from '@shopify/hydrogen/client';
 import {useQuery} from '@apollo/client';
 import ProductCard from './ProductCard.client';
 import gql from 'graphql-tag';
@@ -31,13 +27,22 @@ export default function ProductList(props) {
       pageSize = dataParsed.openProductsWidthSortPageSize;
     }
   }
-  const {data} = useQuery(QUERY, {
+  console.log(handle);
+  const queryResult = useQuery(QUERY, {
     variables: {
       handle: handle,
       numProducts: pageSize,
     },
     skip: !handle,
+    onCompleted: (e) => {
+      console.log(e);
+    },
+    onError: (e) => {
+      console.log('err', e);
+    },
   });
+  const {data} = queryResult;
+  console.log(queryResult);
   const productCount =
     data &&
     data.collection &&
@@ -146,25 +151,63 @@ export const QUERY = gql`
     $handle: String!
     $country: CountryCode
     $numProducts: Int!
-    $includeReferenceMetafieldDetails: Boolean = false
-    $numProductMetafields: Int = 0
-    $numProductVariants: Int = 250
-    $numProductMedia: Int = 6
-    $numProductVariantMetafields: Int = 0
-    $numProductVariantSellingPlanAllocations: Int = 0
-    $numProductSellingPlanGroups: Int = 0
-    $numProductSellingPlans: Int = 0
   ) @inContext(country: $country) {
     collection(handle: $handle) {
-      id
       title
       descriptionHtml
-
+      description
+      seo {
+        description
+        title
+      }
+      image {
+        id
+        url
+        width
+        height
+        altText
+      }
       products(first: $numProducts) {
         edges {
           node {
+            title
             vendor
-            ...ProductProviderFragment
+            handle
+            descriptionHtml
+            compareAtPriceRange {
+              maxVariantPrice {
+                currencyCode
+                amount
+              }
+              minVariantPrice {
+                currencyCode
+                amount
+              }
+            }
+            variants(first: 1) {
+              edges {
+                node {
+                  id
+                  title
+                  availableForSale
+                  image {
+                    id
+                    url
+                    altText
+                    width
+                    height
+                  }
+                  priceV2 {
+                    currencyCode
+                    amount
+                  }
+                  compareAtPriceV2 {
+                    currencyCode
+                    amount
+                  }
+                }
+              }
+            }
           }
         }
         pageInfo {
@@ -173,7 +216,4 @@ export const QUERY = gql`
       }
     }
   }
-
-  ${MediaFileFragment}
-  ${ProductProviderFragment}
 `;
