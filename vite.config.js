@@ -1,10 +1,20 @@
+/// <reference types="vitest" />
 import {defineConfig} from 'vite';
 import hydrogen from '@shopify/hydrogen/plugin';
 
-import shopifyConfig from './shopify.config';
-
-// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [hydrogen(shopifyConfig)],
-  optimizeDeps: {include: ['@headlessui/react']},
+  plugins: [hydrogen()],
+  resolve: {
+    alias: [{find: /^~\/(.*)/, replacement: '/src/$1'}],
+  },
+  optimizeDeps: {
+    include: [
+      // '@headlessui/react', 'clsx', 'react-use', 'typographic-base'
+    ],
+  },
+  test: {
+    globals: true,
+    testTimeout: 10000,
+    hookTimeout: 10000,
+  },
 });

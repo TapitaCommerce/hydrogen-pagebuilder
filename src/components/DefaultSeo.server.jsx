@@ -1,28 +1,37 @@
-import {useShopQuery} from '@shopify/hydrogen';
-import gql from 'graphql-tag';
-
-import Seo from './Seo.client';
+import {CacheLong, gql, Seo, useShopQuery} from '@shopify/hydrogen';
 
 /**
  * A server component that fetches a `shop.name` and sets default values and templates for every page on a website
  */
-export default function DefaultSeo() {
+export function DefaultSeo() {
   const {
     data: {
-      shop: {name: shopName},
+      shop: {name, description},
     },
   } = useShopQuery({
-    query: QUERY,
-    cache: {maxAge: 60 * 60 * 12, staleWhileRevalidate: 60 * 60 * 12},
+    query: SHOP_QUERY,
+    cache: CacheLong(),
+    preload: '*',
   });
 
-  return <Seo shopName={shopName} />;
+  return (
+    // @ts-ignore TODO: Fix types
+    <Seo
+      type="defaultSeo"
+      data={{
+        title: name,
+        description,
+        titleTemplate: `%s · ${name}`,
+      }}
+    />
+  );
 }
 
-const QUERY = gql`
-  query shopName {
+const SHOP_QUERY = gql`
+  query shopInfo {
     shop {
       name
+      description
     }
   }
 `;

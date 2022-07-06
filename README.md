@@ -1,59 +1,46 @@
-# Hydrogen App
+# Hydrogen Demo Store
 
 Hydrogen is a React framework and SDK that you can use to build fast and dynamic Shopify custom storefronts.
 
 [Check out the docs](https://shopify.dev/custom-storefronts/hydrogen)
 
+[Run this template on StackBlitz](https://stackblitz.com/github/Shopify/hydrogen/tree/stackblitz/templates/demo-store)
+
 ## Getting started
 
 **Requirements:**
 
-- Node v14+
+- Node.js version 16.5.0 or higher
 - Yarn
 
-```bash
-yarn
-yarn dev
-```
-
-Remember to update `shopify.config.js` with your shop's domain and Storefront API token!
-
-## Previewing a production build
-
-To run a local preview of your Hydrogen app in an environment similar to Oxygen, build your Hydrogen app and then run `yarn preview`:
+To create a new Hydrogen app, run:
 
 ```bash
-yarn build
-yarn preview
+npm init @shopify/hydrogen
 ```
+
+## Running the dev server
+
+Then `cd` into the new directory and run:
+
+```bash
+npm install
+npm run dev
+```
+
+Remember to update `hydrogen.config.js` with your shop's domain and Storefront API token!
 
 ## Building for production
 
 ```bash
-yarn build
+npm run build
 ```
 
-Then, you can run a local `server.js` using the production build with:
+## Previewing a production build
+
+To run a local preview of your Hydrogen app in an environment similar to Oxygen, build your Hydrogen app and then run `npm run preview`:
 
 ```bash
-yarn serve
-```
-
-
-## To Integrate your key
-1. You have to create an account at Tapita.io
-2. Sync your Shopify site to Tapita
-3. Copy Integration Token 
-![alt text](https://tapita.io/wp-content/uploads/2021/11/Hydrogen_int_guide.png)
-4. Open the file at
-```
-  src/components/NotFound.server.jsx
-```
-5. And change the value at this line:
-```
-  const integrationToken = '2xBXodtu16OPOKsWKcxA3riSeDkRpDL1622517111';
-```
-to your integration key and re-run the serve command.
-```
-yarn serve
+npm run build
+npm run preview
 ```
