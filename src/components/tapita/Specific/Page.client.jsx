@@ -4,6 +4,7 @@ import {defaultFindPagePredicate} from '~/lib/tapita/findBlock/defaultFindPagePr
 
 export function PageClient(props) {
   const {handle} = useRouteParams();
+
   return (
     <FullPageClient
       {...props}

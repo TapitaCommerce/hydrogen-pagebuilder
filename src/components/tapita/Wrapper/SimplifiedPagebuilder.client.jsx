@@ -6,6 +6,7 @@ import {Category} from './ProductComponents/Category';
 import {ProductScroll} from './ProductComponents/ProductScroll';
 
 export const SimplifiedPagebuilderClient = (props) => {
+
   return (
     <PageBuilderComponent
       {...props}

@@ -7,7 +7,6 @@ const DEFAULT_PAGE_NAMESPACE = 'catalog_builder_page';
 
 export const PartialPageClient = (props) => {
   const {
-    intToken,
     handle,
     pageNamespace = DEFAULT_PAGE_NAMESPACE,
     layoutFilter = null,
@@ -21,12 +20,7 @@ export const PartialPageClient = (props) => {
     country: {isoCode: countryCode},
   } = useLocalization();
 
-  const sth = fetchSync(
-    `https://tapitaio.pwa-commerce.com/pb/publishedpb/?integrationToken=${intToken}`,
-    {
-      cache: 'force-cache',
-    },
-  ).json();
+  const sth = fetchSync(`/hydrated_tapita/api`, {}).json();
 
   const pages = sth?.data?.[pageNamespace]?.items ?? [];
 

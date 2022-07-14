@@ -6,6 +6,7 @@ import {
   ShopifyAnalyticsConstants,
   gql,
   useServerProps,
+  CacheLong,
 } from '@shopify/hydrogen';
 import {Suspense} from 'react';
 
@@ -13,6 +14,8 @@ import {PageHeader} from '~/components';
 import {NotFound, Layout} from '~/components/index.server';
 import {TapitaTranscendentalStatistic} from '../../lib/tapita/TapitaTranscendentalStatistic';
 import {PageClient} from '../../components/tapita/Specific/Page.client';
+import {useRefreshingServerCache} from '../../lib/tapita/useRefreshingServerCache';
+import {findFinalPage} from '../../lib/tapita/findBlock/findFinalPage';
 
 const BasePage = ({page}) => {
   return (
@@ -31,13 +34,22 @@ const BasePage = ({page}) => {
 };
 
 export default function Page(props) {
-  const {params} = props;
+  const {params, response} = props;
+  response.cache(CacheLong());
 
   const {
+    country: {isoCode: countryCode},
     language: {isoCode: languageCode},
   } = useLocalization();
 
   const {handle} = params;
+  const {cacheData} = useRefreshingServerCache();
+  const pageCache = findFinalPage(cacheData, {
+    url_path: handle,
+    languageCode,
+    countryCode,
+  });
+
   const {
     data: {page},
   } = useShopQuery({
@@ -46,7 +58,7 @@ export default function Page(props) {
   });
   const {pending} = useServerProps();
 
-  if (!page) {
+  if (!page && !pageCache) {
     return <NotFound />;
   }
   const intToken = Oxygen.env.TAPITA_INTEGRATION_TOKEN;
@@ -54,19 +66,22 @@ export default function Page(props) {
     props,
     handle,
   );
-  const maybeTapitaPage = page.body === '';
+  const maybeTapitaPage = pageCache||( page.body === '');
   const hasPage = !!intToken && status && maybeTapitaPage;
 
   useServerAnalytics({
     shopify: {
       pageType: ShopifyAnalyticsConstants.pageType.page,
-      resourceId: page.id,
+      resourceId: page?page.id:'?',
     },
   });
+
   return (
     <>
       {pending ? <p>Loading...</p> : null}
-      {hasPage ? <PageClient intToken={intToken} page={page} /> : null}
+      {hasPage ? (
+        <PageClient intToken={intToken} page={page} cacheData={pageCache} />
+      ) : null}
       {!hasPage ? <BasePage page={page} /> : null}
     </>
   );

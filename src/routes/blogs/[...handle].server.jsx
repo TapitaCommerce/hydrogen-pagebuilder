@@ -1,4 +1,4 @@
-import {useServerProps} from '@shopify/hydrogen';
+import {CacheLong, useLocalization, useServerProps} from '@shopify/hydrogen';
 import {Suspense} from 'react';
 import {PageHeader} from '~/components';
 import {Layout} from '~/components/index.server';
@@ -6,16 +6,33 @@ import {resolveBlog} from '../../lib/tapita/resolveBlog';
 import {NotFound} from '../../components/global/NotFound.server';
 import {BlogClient} from '../../components/tapita/Specific/Blog.client';
 import {TapitaTranscendentalStatistic} from '../../lib/tapita/TapitaTranscendentalStatistic';
+import {useRefreshingServerCache} from '../../lib/tapita/useRefreshingServerCache';
+import {findFinalBlogPage} from '../../lib/tapita/findBlock/findFinalPage';
 
 export default function Blog(props) {
-  const {request} = props;
+  const {request, response} = props;
+  response.cache(CacheLong());
+
+  const {
+    country: {isoCode: countryCode},
+    language: {isoCode: languageCode},
+  } = useLocalization();
+
   const {pathname} = new URL(request.url);
   const d = resolveBlog(pathname);
+
+  const {cacheData} = useRefreshingServerCache();
 
   if (!d) {
     return <NotFound />;
   }
   const {blogHandle, articleHandle} = d;
+  const pageCache = findFinalBlogPage(cacheData, {
+    articleHandle,
+    languageCode,
+    countryCode,
+    blogHandle,
+  });
 
   const status = TapitaTranscendentalStatistic.getPageAnalyticBlock(
     props,
@@ -30,6 +47,7 @@ export default function Blog(props) {
             blogHandle={blogHandle}
             articleHandle={articleHandle}
             status={status}
+            cacheData={pageCache}
           />
         </Suspense>
       </PageHeader>
@@ -37,11 +55,11 @@ export default function Blog(props) {
   );
 }
 
-function ServerBlog({blogHandle, articleHandle, status}) {
+function ServerBlog({blogHandle, articleHandle, status, cacheData}) {
   const intToken = Oxygen.env.TAPITA_INTEGRATION_TOKEN;
   const {pending} = useServerProps();
 
-  const hasBlog = !!intToken && status;
+  const hasBlog = !!intToken && (status || cacheData);
 
   return (
     <>
@@ -51,6 +69,7 @@ function ServerBlog({blogHandle, articleHandle, status}) {
           blogHandle={blogHandle}
           articleHandle={articleHandle}
           intToken={intToken}
+          cacheData={cacheData}
         />
       )}
       {!hasBlog && <NotFound />}

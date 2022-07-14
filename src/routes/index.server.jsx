@@ -16,8 +16,13 @@ import {FeaturedCollections, Hero} from '~/components';
 import {Layout, ProductSwimlane} from '~/components/index.server';
 import {HomeClient} from '../components/tapita/Specific/Home.client';
 import {TapitaTranscendentalStatistic} from '~/lib/tapita/TapitaTranscendentalStatistic';
+import {useRefreshingServerCache} from '../lib/tapita/useRefreshingServerCache';
+import {findFinalPage} from '../lib/tapita/findBlock/findFinalPage';
 
 export default function Homepage(props) {
+  const {response} = props;
+  response.cache(CacheLong());
+
   useServerAnalytics({
     shopify: {
       pageType: ShopifyAnalyticsConstants.pageType.home,
@@ -37,12 +42,27 @@ export default function Homepage(props) {
 function HigherOrderHome({status}) {
   const {pending} = useServerProps();
   const intToken = Oxygen.env.TAPITA_INTEGRATION_TOKEN;
-  const hasHome = !!intToken && status;
 
+  const {
+    language: {isoCode: languageCode},
+    country: {isoCode: countryCode},
+  } = useLocalization();
+
+  const {cacheData} = useRefreshingServerCache();
+  const homeCache = findFinalPage(cacheData, {
+    url_path: '/',
+    languageCode,
+    countryCode,
+  });
+  const hasHome = intToken && (status || homeCache);
+
+  // return <HomepageContent/ >
   return (
     <>
       {pending ? <p>Loading...</p> : null}
-      {hasHome ? <HomeClient intToken={intToken} /> : null}
+      {hasHome ? (
+        <HomeClient intToken={intToken} cacheData={homeCache} />
+      ) : null}
       {!hasHome ? <HomepageContent /> : null}
     </>
   );

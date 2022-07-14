@@ -10,23 +10,18 @@ const DEFAULT_PAGE_NAMESPACE = 'spb_page';
 
 export function FullPageClient(props) {
   const {
-    intToken,
     url_path,
     pageNamespace = DEFAULT_PAGE_NAMESPACE,
     findPagePredicate = defaultFindPagePredicate,
     articleHandle,
     blogHandle,
+    cacheData = null,
   } = props;
   const {setServerProps} = useServerProps();
 
-  const sth = fetchSync(
-    `https://tapitaio.pwa-commerce.com/pb/publishedpb/?integrationToken=${intToken}`,
-    {
-      cache: 'force-cache',
-    },
-  ).json();
+  const sth = !cacheData ? fetchSync(`/hydrated_tapita/api`, {}).json() : null;
 
-  const pages = sth?.data?.[pageNamespace]?.items ?? [];
+  const pages = cacheData ? [] : sth?.data?.[pageNamespace]?.items ?? [];
 
   const currentVar = {
     url_path,
@@ -37,15 +32,15 @@ export function FullPageClient(props) {
   const pageFound = findPriortizedPage(pagesFound);
 
   useEffect(() => {
-    if (!pageFound) {
+    if (!pageFound && !cacheData) {
       TapitaTranscendentalStatistic.saveAnalytics(pageFound, setServerProps);
     }
   }, []);
 
-  if (pageFound) {
+  if (cacheData || pageFound) {
     return (
       <>
-        <SimplifiedPagebuilderClient pageData={pageFound} />
+        <SimplifiedPagebuilderClient pageData={cacheData || pageFound} />
       </>
     );
   } else {
